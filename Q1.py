@@ -10,31 +10,24 @@ class Nodo:
 class Pilha:
     def __init__(self):
         self.topo = None
+        self.size = 0
         
     def insere(self, novo_dado):
-        """Insere um elemento no final da pilha."""
-
-    # Cria um novo nodo com o dado a ser armazenado.
         novo_nodo = Nodo(novo_dado)
-
-    # Faz com que o novo nodo seja o topo da pilha.
         novo_nodo.anterior = self.topo
-
-    # Faz com que a cabeça da lista referencie o novo nodo.
         self.topo = novo_nodo
+        self.size += 1
 
 
     def pop(self):
-        """Remove o elemento que está no topo da pilha."""
-
-        assert self.topo, "Impossível remover valor de pilha vazia."
+        assert self.topo, "Pilha !Vazia"
 
         self.topo = self.topo.anterior
+        self.size -= 1
 
     def __repr__(self):
         return "[" + str(self.topo) + "]"
-
-
+    
 def checaPar(x,y):
     if x%2 == y%2:
         return True
@@ -47,50 +40,39 @@ def doSub (x,y):
     else:
         return y-x
 
-
-
-# Cria uma pilha vazia.
-pilha = Pilha()
-print("Pilha vazia: ", pilha)
-
-# Insere elementos na pilha.
-def newBox(box):
+def newBox(pilha, box):
     if box != 0:
         if pilha.topo == None:
             pilha.insere(box)
-            print("Insere o valor {0} no topo da pilha: {1}".format(box, pilha))
         
         else:   
             if checaPar(pilha.topo.dado, box):
                 sBox = doSub(pilha.topo.dado, box)
                 pilha.pop()
-                newBox(sBox)
+                newBox(pilha, sBox)
             else:
                 pilha.insere(box)
-                print("Insere o valor {0} no topo da pilha: {1}".format(box, pilha))
     else:
+        return pilha
     
-def newGame():
-    result = []
-
+def newGame(pilha):
     while True:
         box = input()
-    
         if box:
             if box == "0":
-                print (pilha)
+                return pilha
             else:
-                newBox(int(box))
+                newBox(pilha,int(box))
         
-            
 
+def main():
+    nGames = int(input())
+    outputList = ""
 
+    for n in range(nGames):
+        result = newGame(Pilha())
+        output = "Pilha {0}: {1} {2}".format(n+1, result.size, result.topo.dado)
+        print(output)   
 
-nGames = int(input())
-
-newGame()
-
-# Remove elementos na pilha.
-while pilha.topo != None:
-    pilha.pop()
-    print("Removendo elemento que está no topo da pilha: ", pilha)
+if __name__ == '__main__':
+    main()
