@@ -20,29 +20,37 @@ doSubtracao x y
  | x >= y       = x-y
  | otherwise    = y-x
 
-novaJogada :: Int -> [Int] -> [Int]
-novaJogada n pilha
+newBox :: Int -> [Int] -> [Int]
+newBox n pilha
  | pilha == []                        = push pilha n
- | checkParidade (top pilha) n        = novaJogada (doSubtracao (top pilha) n) ((pop pilha))
+ | checkParidade (top pilha) n        = newBox (doSubtracao (top pilha) n) (pop pilha)
  | otherwise                          = push pilha n
 
 gameControl :: IO ()
 gameControl = do
     putStrLn "Enter n Games (enter 0 to finish):"
     nGames <- getInt
+    newGame nGames
+
+newGame :: Int -> IO()
+newGame 0 = return()
+newGame n = do
     readInput []
+    newGame (n-1)
+
 
 readInput :: [Int] -> IO ()
 readInput ttInput = do
-    move <- getInt
-    if move == 0
-        then printLines ttInput
-        else readInput (novaJogada move ttInput)
+    box <- getInt
+    if box == 0
+        then formatResult ttInput
+        else readInput (newBox box ttInput)
 
-printLines :: [Int] -> IO ()
-printLines linesToPrint = do
-    putStrLn "You entered the following lines:"
-    print linesToPrint
+formatResult :: [Int] -> IO ()
+formatResult linesToPrint = do
+    -- Pilha i: length pilha top pilha
+    print ("Pilha 1: " ++ show (length linesToPrint) ++ " " ++ show (top linesToPrint))
+    
 
 
 getInt :: IO Int
@@ -50,7 +58,6 @@ getInt = read <$> getLine
 
 main :: IO ()
 main = gameControl
-
 
 
 
