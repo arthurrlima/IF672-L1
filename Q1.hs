@@ -46,10 +46,14 @@ readInput ttInput = do
         then formatResult ttInput
         else readInput (newBox box ttInput)
 
-formatResult :: [Int] -> IO ()
-formatResult linesToPrint = do
+rcvBox :: [Int] -> [Int]
+
+
+formatResult :: [Int] -> [String]
+formatResult linesToPrint =
     -- Pilha i: length pilha top pilha
-    print ("Pilha 1: " ++ show (length linesToPrint) ++ " " ++ show (top linesToPrint))
+    [("Pilha"++show  ++ show (length linesToPrint) 
+                ++ " " ++ show (top linesToPrint))]
     
 
 
