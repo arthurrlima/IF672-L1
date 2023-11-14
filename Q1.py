@@ -53,7 +53,7 @@ def newBox(pilha, box):
             else:
                 pilha.insere(box)
     else:
-        return pilha
+        pilha.insere(box)
     
 def newGame(pilha):
     while True:
@@ -71,8 +71,12 @@ def main():
 
     for n in range(nGames):
         result = newGame(Pilha())
-        output = "Pilha {0}: {1} {2}".format(n+1, result.size, result.topo.dado)
-        print(output)   
+        if result.size == 0:
+            output = "Pilha {0}: {1} {2}".format(n+1, result.size, -1)
+        else:
+            output = "Pilha {0}: {1} {2}".format(n+1, result.size, result.topo.dado)
+        outputList = outputList + output + "\n" 
 
+    print(outputList.strip())
 if __name__ == '__main__':
     main()
