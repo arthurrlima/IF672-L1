@@ -46,9 +46,7 @@ def carregaBalsa(balsa, porto):
         if carga + porto.fst.size <= balsa.size:
             balsa.ins(porto.fst)
             carga += porto.fst.size
-            print("removendo: " + str(porto.fst.size))
             porto.rmv()
-            print(porto)
         else:
             break
     
@@ -69,30 +67,29 @@ def newGame(size, n):
         car = input()
         tam, lado = car.split()
 
-        if lado.capitalize == "ESQUERDO":
+        if lado == "esquerdo":
             m_esq.ins(int(tam))
         else:
             m_dir.ins(int(tam))
+          
+    viagensE = travessia(balsa, m_esq)
+    viagensD = travessia(balsa, m_dir)
 
+    if viagensD >= viagensE:
+        return viagensD + viagensE + (viagensD - viagensE)
+    else:
+        return viagensE + viagensD + (viagensE - viagensD) -1
     
-
-    #começa do lado esquerdo
-    result = travessia(balsa, m_esq) + travessia(balsa, m_dir)
-    return result
 
 def main():
     nTests = int(input())
     outputList = ""
 
-
     for n in range(nTests):
 
         size, nCars = input().split()
-
         result = newGame(int(size)*100, int(nCars))
-
         output = "Caso {0}: {1}".format(n+1, result)
-
         outputList = outputList + output + "\n" 
 
     print(outputList.strip())
@@ -100,40 +97,3 @@ def main():
 if __name__ == '__main__':
     main()
 
-
-
-
-# balsa = Lista(50)
-# porto = Lista()
-
-# porto.ins(10)
-# porto.ins(10)
-# porto.ins(10)
-# porto.ins(20)
-# porto.ins(20)
-# porto.ins(20)
-
-# print(porto.isEmpty())
-# print(balsa.size)
-
-# result = travessia(balsa,porto)
-
-
-
-# print(result)
-
-
-
-
-# def main():
-#     nGames = int(input())
-#     outputList = ""
-
-#     for n in range(nGames):
-#         #n rounds:
-
-
-
-        
-# if __name__ == '__main__':
-#     main()
