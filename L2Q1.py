@@ -1,133 +1,194 @@
 class Nodo:
-    def __init__(self, chave):
-        self.chave = chave
+    def __init__(self, val):
+        self.val = val
         self.esquerda = None
         self.direita = None
         self.altura = 1
 
 class Arvore:
 
-    def insert(self, pai, chave):
-        if not pai:
+    def insert(self, raiz, chave):
+        if not raiz:
             return Nodo(chave)
-        
-        elif chave < pai.chave:
-            pai.esquerda = self.insert(pai.esquerda, chave)
+        elif chave == raiz.val:
+            return raiz
+        elif chave < raiz.val:
+            raiz.esquerda = self.insert(raiz.esquerda, chave)
         else: 
-            pai.direita = self.insert(pai.direita, chave)
+            raiz.direita = self.insert(raiz.direita, chave)
 
-        #Atualiza Altura do pai
-        pai.altura = 1 + max(self.calcAltura(pai.esquerda), self.calcAltura(pai.direita))
+        raiz.altura = 1 + max(self.calcAltura(raiz.esquerda), self.calcAltura(raiz.direita))
+      
+        fatorBalanc = self.calcFatorBalanc(raiz)
 
-        #balancea se necessario e atualiza as alturas
-        fatorBalanc = self.calcFatorBalanc(pai)
-        if fatorBalanc > 1:
-            if chave < pai.esquerda.chave:
-                return self.rotDireita(pai)
-            else:
-                pai.esquerda = self.rotEsquerda(pai.esquerda)
-                return self.rotDireita(pai)
+        if fatorBalanc > 1 and chave < raiz.esquerda.val: 
+            return self.rotDireita(raiz) 
+  
+        if fatorBalanc < -1 and chave > raiz.direita.val: 
+            return self.rotEsquerda(raiz) 
+  
+        if fatorBalanc > 1 and chave > raiz.esquerda.val: 
+            raiz.esquerda = self.rotEsquerda(raiz.esquerda) 
+            return self.rotDireita(raiz) 
+  
+        if fatorBalanc < -1 and chave < raiz.direita.val: 
+            raiz.direita = self.rotDireita(raiz.direita) 
+            return self.rotEsquerda(raiz) 
+  
+        return raiz 
+
+    def remove(self, raiz, chave):
+        if not raiz:
+            print("Valor {0} inexistente".format(chave))
+            return raiz
  
-        if fatorBalanc < -1:
-            if chave > pai.direita.chave:
-                return self.rotEsquerda(pai)
-            else:
-                pai.direita = self.rotDireita(pai.direita)
-                return self.rotEsquerda(pai)
+        elif chave < raiz.val:
+            raiz.esquerda = self.remove(raiz.esquerda, chave)
  
-        return pai
+        elif chave > raiz.val:
+            raiz.direita = self.remove(raiz.direita, chave)
+ 
+        else:
+            if raiz.esquerda is None:
+                temp = raiz.direita
+                raiz = None
+                return temp
+ 
+            elif raiz.direita is None:
+                temp = raiz.esquerda
+                raiz = None
+                return temp
+ 
+            temp = self.menorChave(raiz.direita)
+            raiz.val = temp.val
+            raiz.direita = self.remove(raiz.direita, temp.val)
+ 
+        if raiz is None:
+            return raiz
+ 
+        raiz.altura = 1 + max(self.calcAltura(raiz.esquerda),
+                            self.calcAltura(raiz.direita))
+ 
+        fatorBalanc = self.calcFatorBalanc(raiz)
+ 
+        if fatorBalanc > 1 and self.calcFatorBalanc(raiz.esquerda) >= 0:
+            return self.rotDireita(raiz)
+ 
+        if fatorBalanc < -1 and self.calcFatorBalanc(raiz.direita) <= 0:
+            return self.rotEsquerda(raiz)
+ 
+        if fatorBalanc > 1 and self.calcFatorBalanc(raiz.esquerda) < 0:
+            raiz.esquerda = self.rotEsquerda(raiz.esquerda)
+            return self.rotDireita(raiz)
+ 
+        if fatorBalanc < -1 and self.calcFatorBalanc(raiz.direita) > 0:
+            raiz.direita = self.rotDireita(raiz.direita)
+            return self.rotEsquerda(raiz)
+ 
+        return raiz
 
 
-    def calcAltura(self, pai):
-        if not pai:
+    def calcAltura(self, raiz):
+        if not raiz:
             return 0
-        return pai.altura
+        return raiz.altura
     
-    def calcFatorBalanc(self, pai):
-        if not pai:
+    def calcFatorBalanc(self, raiz):
+        if not raiz:
             return 0
-        return self.calcAltura(pai.esquerda) - self.calcAltura(pai.direita)
+        return self.calcAltura(raiz.esquerda) - self.calcAltura(raiz.direita)
+    
+    def menorChave(self, raiz):
+        if raiz is None or raiz.esquerda is None:
+            return raiz
+        return self.menorChave(raiz.esquerda)
 
-    def rotEsquerda(self, b):
-        a = b.direita
-        T2 = a.esquerda
-        a.esquerda = b
-        b.direita = T2
-        b.altura = 1 + max(self.calcAltura(b.esquerda), self.calcAltura(b.direita))
-        a.altura = 1 + max(self.calcAltura(a.esquerda), self.calcAltura(a.direita))
-        return a
+    def rotEsquerda(self, z):
+        y = z.direita 
+        T2 = y.esquerda 
+  
+        y.esquerda = z 
+        z.direita = T2 
+       
+        z.altura = 1 + max(self.calcAltura(z.esquerda), self.calcAltura(z.direita))
+        y.altura = 1 + max(self.calcAltura(y.esquerda), self.calcAltura(y.direita))
+  
+        return y 
  
-     
-    def rotDireita(self, b):
-        a = b.esquerda
-        T3 = a.direita
-        a.direita = b
-        b.esquerda = T3
-        b.altura = 1 + max(self.calcAltura(b.esquerda), self.calcAltura(b.direita))
-        a.altura = 1 + max(self.calcAltura(a.esquerda), self.calcAltura(a.direita))
-        return a
+    def rotDireita(self, z):
+        y = z.esquerda 
+        T3 = y.direita 
+  
+        y.direita = z 
+        z.esquerda = T3 
+   
+        z.altura = 1 + max(self.calcAltura(z.esquerda), self.calcAltura(z.direita)) 
+        y.altura = 1 + max(self.calcAltura(y.direita), self.calcAltura(y.direita)) 
 
+        return y
 
-    def buscaChave(self, pai, chave, nivel = 0):
-        if not pai:
+    def buscaChave(self, raiz, chave, nivel = 0):
+        if not raiz:
             return
-        elif chave < pai.chave:
-            return self.buscaChave(pai.esquerda, chave, nivel+1)
-        elif chave > pai.chave:
-            return self.buscaChave(pai.direita, chave, nivel+1)
+        elif chave < raiz.val:
+            return self.buscaChave(raiz.esquerda, chave, nivel+1)
+        elif chave > raiz.val:
+            return self.buscaChave(raiz.direita, chave, nivel+1)
         else: 
             return nivel
 
+    def imprimeOrdem(self, raiz, arg):
+        if arg == "PREORDEM":
+            return('['+self.preOrdem(raiz)[0:-1]+']')
 
-    def preOrdem(self, pai):
-        if not pai:
+        elif arg == "EMORDEM":
+            return('['+self.emOrdem(raiz)[0:-1]+']')
+
+        elif arg == "POSORDEM":
+            return('['+self.posOrdem(raiz)[0:-1]+']')
+
+    def preOrdem(self, raiz):
+        if not raiz:
             return
+    
+        return("{0},{1}{2}".format(raiz.val, self.emOrdem(raiz.esquerda), self.emOrdem(raiz.direita)))
 
-        # Visita o pai
-        print("{0}".format(pai.chave), end=",")
-        # Visita as subArvores em preOrdem da esquerda pra direita
-        self.preOrdem(pai.esquerda)
-        self.preOrdem(pai.direita)
+    def emOrdem(self, raiz):
+        if not raiz:
+            return ""
 
-    def emOrdem(self, pai):
-        if not pai:
-            return
+        return("{0}{1},{2}".format(self.emOrdem(raiz.esquerda), raiz.val, self.emOrdem(raiz.direita)))
 
-        # Visita a subArvore esquerda em Ordem
-        self.emOrdem(pai.esquerda)
-        # isita o pai
-        print ("{0}".format(pai.chave), end=",")
-        # Visita a subArvore direita em Ordem
-        self.emOrdem(pai.direita)
+    def posOrdem(self, raiz):
+        if not raiz:
+            return ""
 
-    def posOrdem(self, pai):
-        if not pai:
-            return
-        
-        # Visitar a subArvore esquerda
-        self.posOrdem(pai.esquerda)
-        # Visita a subArvore direita
-        self.posOrdem(pai.direita)
-        # Visita o pai
-        print(pai.chave, end=",")
+        return("{0}{1}{2},".format(self.posOrdem(raiz.esquerda), self.posOrdem(raiz.direita), raiz.val))
 
 
-print("SOF")
-arvo = Arvore()
-pai = None
-pai = arvo.insert(pai, 10)
-pai = arvo.insert(pai, 5)
-pai = arvo.insert(pai, 12)
-pai = arvo.insert(pai, 7)
-pai = arvo.insert(pai, 11)
+def main():
 
-arvo.preOrdem(pai)
-print('\n')
-print('\n')
-pai = arvo.insert(pai, 8)
+    avl = Arvore()
+    raiz = None
 
-arvo.preOrdem(pai)
+    while True:
+        entry = input()
+        if entry == "FIM":
+            break
+        else:
+            func, arg = entry.split()
 
-procuraChave = 7
+            if func == "ADICIONA":
+                raiz = avl.insert(raiz, int(arg))
+            elif func == "REMOVE":
+                raiz = avl.remove(raiz, int(arg))
+            elif func == "NIVEL":
+                print("Nivel de {0}: {1}".format(arg, avl.buscaChave(raiz, int(arg))))
+            elif func == "PRINT":
+                print(avl.imprimeOrdem(raiz, arg))   
+            else:
+                pass
 
-print(arvo.buscaChave(pai, procuraChave))
+
+if __name__ == '__main__':
+    main()
