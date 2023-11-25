@@ -182,7 +182,10 @@ def main():
             elif func == "REMOVE":
                 raiz = avl.remove(raiz, int(arg))
             elif func == "NIVEL":
-                print("Nivel de {0}: {1}".format(arg, avl.buscaChave(raiz, int(arg))))
+                if avl.buscaChave(raiz, int(arg)) == None:
+                    print("Valor {0} inexistente".format(arg))
+                else:
+                    print("Nivel de {0}: {1}".format(arg, avl.buscaChave(raiz, int(arg))))
             elif func == "PRINT":
                 print(avl.imprimeOrdem(raiz, arg))   
             else:
