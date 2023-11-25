@@ -21,21 +21,21 @@ class Arvore:
       
         fatorBalanc = self.calcFatorBalanc(raiz)
 
-        if fatorBalanc > 1 and chave < raiz.esquerda.val: 
-            return self.rotDireita(raiz) 
-  
-        if fatorBalanc < -1 and chave > raiz.direita.val: 
-            return self.rotEsquerda(raiz) 
-  
-        if fatorBalanc > 1 and chave > raiz.esquerda.val: 
-            raiz.esquerda = self.rotEsquerda(raiz.esquerda) 
-            return self.rotDireita(raiz) 
-  
-        if fatorBalanc < -1 and chave < raiz.direita.val: 
-            raiz.direita = self.rotDireita(raiz.direita) 
-            return self.rotEsquerda(raiz) 
-  
-        return raiz 
+        if fatorBalanc > 1 and chave > raiz.direita.val:
+            return self.rotEsquerda(raiz)
+
+        if fatorBalanc < -1 and chave < raiz.esquerda.val:
+            return self.rotDireita(raiz)
+
+        if fatorBalanc > 1 and chave < raiz.direita.val:
+            raiz.direita = self.rotDireita(raiz.direita)
+            return self.rotEsquerda(raiz)
+
+        if fatorBalanc < -1 and chave > raiz.esquerda.val:
+            raiz.esquerda = self.rotEsquerda(raiz.esquerda)
+            return self.rotDireita(raiz)
+
+        return raiz
 
     def remove(self, raiz, chave):
         if not raiz:
@@ -66,25 +66,24 @@ class Arvore:
         if raiz is None:
             return raiz
  
-        raiz.altura = 1 + max(self.calcAltura(raiz.esquerda),
-                            self.calcAltura(raiz.direita))
+        raiz.altura = 1 + max(self.calcAltura(raiz.esquerda), self.calcAltura(raiz.direita))
  
         fatorBalanc = self.calcFatorBalanc(raiz)
  
-        if fatorBalanc > 1 and self.calcFatorBalanc(raiz.esquerda) >= 0:
-            return self.rotDireita(raiz)
- 
-        if fatorBalanc < -1 and self.calcFatorBalanc(raiz.direita) <= 0:
+        if fatorBalanc > 1 and self.calcFatorBalanc(raiz.direita) >= 0:
             return self.rotEsquerda(raiz)
- 
-        if fatorBalanc > 1 and self.calcFatorBalanc(raiz.esquerda) < 0:
-            raiz.esquerda = self.rotEsquerda(raiz.esquerda)
+
+        if fatorBalanc < -1 and self.calcFatorBalanc(raiz.esquerda) <= 0:
             return self.rotDireita(raiz)
- 
-        if fatorBalanc < -1 and self.calcFatorBalanc(raiz.direita) > 0:
+
+        if fatorBalanc > 1 and self.calcFatorBalanc(raiz.direita) < 0:
             raiz.direita = self.rotDireita(raiz.direita)
             return self.rotEsquerda(raiz)
- 
+
+        if fatorBalanc < -1 and self.calcFatorBalanc(raiz.esquerda) > 0:
+            raiz.esquerda = self.rotEsquerda(raiz.esquerda)
+            return self.rotDireita(raiz)
+
         return raiz
 
 
@@ -96,7 +95,7 @@ class Arvore:
     def calcFatorBalanc(self, raiz):
         if not raiz:
             return 0
-        return self.calcAltura(raiz.esquerda) - self.calcAltura(raiz.direita)
+        return self.calcAltura(raiz.direita) - self.calcAltura(raiz.esquerda)
     
     def menorChave(self, raiz):
         if raiz is None or raiz.esquerda is None:
@@ -123,7 +122,7 @@ class Arvore:
         z.esquerda = T3 
    
         z.altura = 1 + max(self.calcAltura(z.esquerda), self.calcAltura(z.direita)) 
-        y.altura = 1 + max(self.calcAltura(y.direita), self.calcAltura(y.direita)) 
+        y.altura = 1 + max(self.calcAltura(y.esquerda), self.calcAltura(y.direita)) 
 
         return y
 
@@ -149,9 +148,9 @@ class Arvore:
 
     def preOrdem(self, raiz):
         if not raiz:
-            return
+            return ""
     
-        return("{0},{1}{2}".format(raiz.val, self.emOrdem(raiz.esquerda), self.emOrdem(raiz.direita)))
+        return("{0},{1}{2}".format(raiz.val, self.preOrdem(raiz.esquerda), self.preOrdem(raiz.direita)))
 
     def emOrdem(self, raiz):
         if not raiz:
