@@ -128,13 +128,13 @@ class Arvore:
 
     def buscaChave(self, raiz, chave, nivel = 0):
         if not raiz:
-            return
+            return "Valor {0} inexistente".format(chave)
         elif chave < raiz.val:
             return self.buscaChave(raiz.esquerda, chave, nivel+1)
         elif chave > raiz.val:
             return self.buscaChave(raiz.direita, chave, nivel+1)
         else: 
-            return nivel
+            return "Nivel de {0}: {1}".format(chave, nivel)
 
     def imprimeOrdem(self, raiz, arg):
         if arg == "PREORDEM":
@@ -182,10 +182,7 @@ def main():
             elif func == "REMOVE":
                 raiz = avl.remove(raiz, int(arg))
             elif func == "NIVEL":
-                if avl.buscaChave(raiz, int(arg)) == None:
-                    print("Valor {0} inexistente".format(arg))
-                else:
-                    print("Nivel de {0}: {1}".format(arg, avl.buscaChave(raiz, int(arg))))
+                print(avl.buscaChave(raiz, int(arg)))
             elif func == "PRINT":
                 print(avl.imprimeOrdem(raiz, arg))   
             else:
