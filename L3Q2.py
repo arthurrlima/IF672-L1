@@ -112,15 +112,101 @@ heap = []
 # VER X C -> Verifica a situação da pessoa de nome X e número de cadastro C.
 
 
+
+
+
+
+
+
+## Teatro = HashTable
+## Cada celula da HashTable = Heap (Fileiras) com tamanho fixo (QTD assentos)
+## Fila de espera = Heap 
+
+class HashTable:
+    def __init__(self, size):
+        self.size = size
+        self.array = [None]*size
+
+    def insert(self, key):
+        index = spreadfn(key, self.size)
+        if self.array[index] is None:
+            #TODO atualizar para cada celula da tabela ser Heap instead of Lista
+            # e ajustes consequentes
+            self.array[index] = Lista()
+            
+        self.array[index].ins(key)
+
+    def delete(self, key):
+        i = spreadfn(key, self.size)
+        if self.array[i] is None:
+            return
+
+        return self.array[i].rmv(key) 
+        
+    def search(self, key):
+        i = spreadfn(key, self.size)
+        if self.array[i] is None:
+            return "404 - NOT FOUND"
+
+        else:
+            j = 0
+            cur = self.array[i].fst
+
+            while(cur != None):
+                j += 1
+                if cur.data == key:
+                    return "{0} {1}".format(i,j)
+                else:
+                    cur = cur.prox
+            return "404 - NOT FOUND"
+
+    
+    
+    def cadastrarPessoa(self, Pessoa):
+        pass
+    
+    def removerPessoa(self, Pessoa, cadastro):
+        pass
+
+    def verPessoa(self, Pessoa, cadastro):
+        pass
+        
+
+def spreadfn(string, tableSize):
+    if not string:
+        return
+
+    result = 0
+    for i in range(len(string)):
+        result += ord(string[i])*(i+1)
+
+    return (result*17)%tableSize
+
+
 class Pessoa:
-    def __init__(self, nome, prioridade, cadastro):
+    def __init__(self, nome, prioridade):
         self.nome = nome
         self.prioridade = prioridade
-        self.cadastro = cadastro
+        self.cadastro = None
+        self.status = None
 
     def __repr__(self):
         return '%s,%s' % (self.nome, self.cadastro)
 
+class Teatro:
+    def __init__(self, fileiras, assentos):
+        self.fileiras = fileiras
+        self.assentos = assentos
+        self.presentes = 0 
+
+    def cadastrarPessoa(self, Pessoa):
+        pass
+    
+    def removerPessoa(self, Pessoa, cadastro):
+        pass
+
+    def verPessoa(self, Pessoa, cadastro):
+        pass
 
 
 
@@ -135,7 +221,7 @@ def main():
 
 
     #INICIA TEATRO
-    tabela = HashTable(int(M))
+    teatro = HashTable(int(M))
 
     #COMANDOS
     entry = input()
