@@ -11,11 +11,6 @@ def heapify(arr, n, i):
         (arr[i], arr[largest]) = (arr[largest], arr[i])
  
         heapify(arr, n, largest)
-        
-def createheap(arr):
-    n = len(arr)
-    for i in range(n // 2 - 1, -1, -1):
-        heapify(arr, n, i)
 
 def reverseheapify(heap, i):
     lower = i
@@ -25,6 +20,12 @@ def reverseheapify(heap, i):
             heap[p], heap[i] = heap[i], heap[p]
             lower = p
             reverseheapify(heap, lower)
+            
+def insertheap(heap, valor):
+    heap.append(valor)
+    n = len(heap)-1
+    reverseheapify(heap, n)
+    print(heap)
 
 def deleteheap(heap,valor):
     f = heap.index(valor)
@@ -36,7 +37,7 @@ def deleteheap(heap,valor):
         reverseheapify(heap, f)
     else:
         heapify(heap,n,f)
- 
+        
 def extractmax(arr):
     n = len(arr)
     arr[0], arr[-1] = arr[-1], arr[0]
@@ -44,12 +45,10 @@ def extractmax(arr):
     heapify(arr, n, 0)
     print(valor)
     print(arr)
-   
-def createheap(arr):
-    n = len(arr)
-    for i in range(n // 2 - 1, -1, -1):
-        heapify(arr, n, i)
-    return arr
+
+def extractmin(arr):
+    pass
+
  
 def heapSort(arr):
     createheap(arr)
@@ -58,11 +57,7 @@ def heapSort(arr):
         (arr[i], arr[0]) = (arr[0], arr[i]) 
         heapify(arr, i, 0)
 
-def insertheap(heap, valor):
-    heap.append(valor)
-    n = len(heap)-1
-    reverseheapify(heap, n)
-    print(heap)
+
 
 heap = []
 
@@ -110,11 +105,6 @@ heap = []
 # CAD X P -> Cadastra a pessoa com nome X e prioridade P.
 # REM X C -> Remove a pessoa de nome X e número de cadastro C do evento.
 # VER X C -> Verifica a situação da pessoa de nome X e número de cadastro C.
-
-
-
-
-
 
 
 
