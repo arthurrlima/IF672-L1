@@ -121,3 +121,20 @@ if path:
     print(f"Custo do menor caminho: {cost}")
 else:
     print(f"Não há caminho entre {start_airport} e {end_airport}")
+
+
+# Ler o DataFrame de um arquivo CSV, importando apenas as três primeiras colunas
+    
+file_path = 'caminho/do/arquivo.csv'  # Substitua pelo caminho correto do seu arquivo
+df = pd.read_csv(file_path, usecols=['origem', 'destino', 'distancia'])
+
+# Exibindo o DataFrame original
+print("DataFrame Original:")
+print(df)
+
+# Removendo linhas duplicadas com base nas colunas 'origem' e 'destino'
+df_sem_duplicatas = df.drop_duplicates(subset=['origem', 'destino'])
+
+# Exibindo o DataFrame resultante
+print("\nDataFrame Sem Duplicatas:")
+print(df_sem_duplicatas)
