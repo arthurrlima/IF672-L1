@@ -63,7 +63,7 @@ class Grafo:
         self.arestas[from_vertice].append((to_vertice, distance))   
         self.arestas[to_vertice].append((from_vertice, distance))  # considering undirected Grafo
 
-def dijkstra(Grafo, start, end):
+def dijkstraHeap(Grafo, start, end):
     heap = [(0, start)]
     visitados = set()
     anterior = {vertice: None for vertice in Grafo.vertices}
@@ -97,6 +97,40 @@ def dijkstra(Grafo, start, end):
 
     return None, float('infinity')
 
+def dijkstraLista(Grafo, start, end):
+    queue = [(0, start)]
+    visited = set()
+    previous = {node: None for node in Grafo.vertices}
+    distances = {node: float('infinity') for node in Grafo.vertices}
+    distances[start] = 0
+
+    while queue:
+        current_distance, current_node = queue.pop(0)
+
+        if current_node in visited:
+            continue
+
+        visited.add(current_node)
+
+        if current_node == end:
+            path = []
+            while current_node is not None:
+                path.insert(0, current_node)
+                current_node = previous[current_node]
+
+            cost = distances[end]
+            return path, cost
+
+        for neighbor, weight in Grafo.arestas[current_node]:
+            if neighbor not in visited:
+                new_distance = current_distance + weight
+                if new_distance < distances[neighbor]:
+                    distances[neighbor] = new_distance
+                    previous[neighbor] = current_node
+                    queue.append((new_distance, neighbor))
+
+    return None, float('infinity')
+
 # Exemplo de uso
 Grafo = Grafo()
 Grafo.add_vertice("JFK")
@@ -114,7 +148,7 @@ Grafo.add_aresta("DFW", "MIA", 1300)
 start_airport = input("Informe o aeroporto de origem: ")
 end_airport = input("Informe o aeroporto de destino: ")
 
-path, cost = dijkstra(Grafo, start_airport, end_airport)
+path, cost = dijkstraLista(Grafo, start_airport, end_airport)
 
 if path:
     print(f"Menor caminho entre {start_airport} e {end_airport}: {path}")
