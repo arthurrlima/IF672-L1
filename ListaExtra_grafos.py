@@ -1,5 +1,7 @@
+## Arthur Romaguera Lima -- ARL3
+## Atividade Extra - Grafos - IF678 2023.2
 import heapq
-#import pandas as pd
+import pandas as pd
 
 class vertice:
     def __init__(self, data):
@@ -14,7 +16,7 @@ class Lista:
     def is_empty(self):
         return self.head is None
 
-    def ins(self, data):
+    def push(self, data):
         new_vertice = vertice(data)
         if self.is_empty():
             self.head = new_vertice
@@ -34,22 +36,7 @@ class Lista:
 
     def peek(self):
         return None if self.is_empty() else self.head.data
-
-    def display(self):
-        current = self.head
-        while current:
-            print(current.data, end=" ")
-            current = current.next
-        print()
-
-
-class Vertex:
-    def __init__(self, id, w=0):
-        self.id = id
-        self.w = w
-        self.vizinhos = Lista()
         
-
 class Grafo:
     def __init__(self):
         self.vertices = set()
@@ -60,8 +47,8 @@ class Grafo:
         self.arestas[value] = []
         
     def add_aresta(self, from_vertice, to_vertice, distance):
-        self.arestas[from_vertice].append((to_vertice, distance))   
-        self.arestas[to_vertice].append((from_vertice, distance))  # considering undirected Grafo
+        self.arestas[from_vertice].append((to_vertice, distance))   # Grafo Direcionado
+        # self.arestas[to_vertice].append((from_vertice, distance))  # Grafo Não Direcionado
 
 def dijkstraHeap(Grafo, start, end):
     heap = [(0, start)]
@@ -98,77 +85,107 @@ def dijkstraHeap(Grafo, start, end):
     return None, float('infinity')
 
 def dijkstraLista(Grafo, start, end):
-    queue = [(0, start)]
+    queue = Lista()
+    queue.push((0, start))
     visited = set()
-    previous = {node: None for node in Grafo.vertices}
-    distances = {node: float('infinity') for node in Grafo.vertices}
+    previous = {vertice: None for vertice in Grafo.vertices}
+    distances = {vertice: float('infinity') for vertice in Grafo.vertices}
     distances[start] = 0
 
     while queue:
-        current_distance, current_node = queue.pop(0)
+        current_distance, current_vertice = queue.pop()
 
-        if current_node in visited:
+        if current_vertice in visited:
             continue
 
-        visited.add(current_node)
+        visited.add(current_vertice)
 
-        if current_node == end:
+        if current_vertice == end:
             path = []
-            while current_node is not None:
-                path.insert(0, current_node)
-                current_node = previous[current_node]
+            while current_vertice is not None:
+                path.insert(0, current_vertice)
+                current_vertice = previous[current_vertice]
 
             cost = distances[end]
             return path, cost
 
-        for neighbor, weight in Grafo.arestas[current_node]:
+        for neighbor, weight in Grafo.arestas[current_vertice]:
             if neighbor not in visited:
                 new_distance = current_distance + weight
                 if new_distance < distances[neighbor]:
                     distances[neighbor] = new_distance
-                    previous[neighbor] = current_node
-                    queue.append((new_distance, neighbor))
+                    previous[neighbor] = current_vertice
+                    queue.push((new_distance, neighbor))
 
     return None, float('infinity')
 
-# Exemplo de uso
-Grafo = Grafo()
-Grafo.add_vertice("JFK")
-Grafo.add_vertice("LAX")
-Grafo.add_vertice("ORD")
-Grafo.add_vertice("DFW")
-Grafo.add_vertice("MIA")
-
-Grafo.add_aresta("JFK", "LAX", 2500)
-Grafo.add_aresta("JFK", "ORD", 800)
-Grafo.add_aresta("LAX", "ORD", 1800)
-Grafo.add_aresta("ORD", "DFW", 900)
-Grafo.add_aresta("DFW", "MIA", 1300)
-
-start_airport = input("Informe o aeroporto de origem: ")
-end_airport = input("Informe o aeroporto de destino: ")
-
-path, cost = dijkstraLista(Grafo, start_airport, end_airport)
-
-if path:
-    print(f"Menor caminho entre {start_airport} e {end_airport}: {path}")
-    print(f"Custo do menor caminho: {cost}")
-else:
-    print(f"Não há caminho entre {start_airport} e {end_airport}")
-
-
-# Ler o DataFrame de um arquivo CSV, importando apenas as três primeiras colunas
+# Driver
+# Ler o DataFrame de um arquivo CSV, importando apenas as colunas desejadas
     
-file_path = 'caminho/do/arquivo.csv'  # Substitua pelo caminho correto do seu arquivo
-df = pd.read_csv(file_path, usecols=['origem', 'destino', 'distancia'])
-
-# Exibindo o DataFrame original
-print("DataFrame Original:")
-print(df)
+file_path = 'D:/code/Airports2.csv'  # Substitua pelo caminho correto do arquivo
+df = pd.read_csv(file_path, usecols=['Origin_airport', 'Destination_airport', 'Distance'])
 
 # Removendo linhas duplicadas com base nas colunas 'origem' e 'destino'
-df_sem_duplicatas = df.drop_duplicates(subset=['origem', 'destino'])
+df_sem_duplicatas = df.drop_duplicates(subset=['Origin_airport', 'Destination_airport'])
 
 # Exibindo o DataFrame resultante
 print("\nDataFrame Sem Duplicatas:")
 print(df_sem_duplicatas)
+
+
+Grafo = Grafo()
+
+# Carregando Vertices
+for index, row in df_sem_duplicatas.iterrows():
+    Grafo.add_vertice(row['Origin_airport'])
+    Grafo.add_vertice(row['Destination_airport'])
+
+# Carregando Arestas
+for index, row in df_sem_duplicatas.iterrows():
+    Grafo.add_aresta(row['Origin_airport'], row['Destination_airport'], int(row['Distance']))
+    
+# #Teste Manual
+# Grafo.add_vertice('REC')
+# Grafo.add_vertice('BSB')
+# Grafo.add_vertice('SSA')
+# Grafo.add_vertice('GIG')
+# Grafo.add_vertice('GRU')
+
+# Grafo.add_aresta('REC','SSA',100)
+# Grafo.add_aresta('SSA','GRU',120)
+# Grafo.add_aresta('GIG', 'GRU', 50)
+# Grafo.add_aresta('BSB', 'GRU', 75)
+
+# print(Grafo.arestas)
+
+while(True):
+    start_airport = input("Informe o aeroporto de origem: ")
+    if start_airport == "quit":
+        break
+    end_airport = input("Informe o aeroporto de destino: ")
+
+
+    #1A)
+    path, cost = dijkstraLista(Grafo, start_airport, end_airport)
+
+    if path:
+        print("Estrutura: Lista")
+        print(f"Menor caminho entre {start_airport} e {end_airport}: {path}")
+        print(f"Custo do menor caminho: {cost}")
+    else:
+        print(f"Não há caminho entre {start_airport} e {end_airport}")
+
+
+    #1B)
+    path, cost = dijkstraHeap(Grafo, start_airport, end_airport)
+
+    if path:
+        print("\nEstrutura: Heap")
+        print(f"Menor caminho entre {start_airport} e {end_airport}: {path}")
+        print(f"Custo do menor caminho: {cost}")
+    else:
+        print(f"Não há caminho entre {start_airport} e {end_airport}")
+
+
+
+
