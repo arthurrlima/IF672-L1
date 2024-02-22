@@ -286,12 +286,8 @@ def dijkstra(G, s, w):
 #         if (v.adjacentes.isEmpty()):
 #             print("{0}: Lista Vazia".format(v.id))
 #         else:
-#             print("{0}: {1}".format(v.id, v.adjacentes), end = "")
-#             print(" ")
+#             print("{0}: {1}".for
             
-#     print()
-#     output = G.dfs(0)
-#     print(output, end = "")
 #     print(" ",end="")
 
 # if __name__ == '__main__':
