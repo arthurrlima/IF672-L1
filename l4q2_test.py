@@ -43,9 +43,11 @@ class Lista:
         return '['+str(self.head)+']'
 
 class Vertice:
-    def __init__(self, id):
+    def __init__(self, id, flag = False):
         self.id = id
         self.Vizinhos = set()
+        self.flag = flag
+        self.distance = float('inf')
     def __repr__(self) -> str:
         return str(self.id)
 class Aresta:
@@ -72,153 +74,80 @@ class Grafo:
     def new_aresta(self, v1, v2, w = 0):
         if (v1 in self.Vertices and v2 in self.Vertices and True):
             v1.Vizinhos.add(v2)
-            v2.Vizinhos.add(v1) #não direcionado
+            v2.Vizinhos.add(v1) #nao direcionado
             self.Arestas.ins(Aresta(v1, v2, w))
             return True
         return False
 
-    def bfs(self, vOrig, vDest):
-        if vOrig not in self.Vertices or vDest not in self.Vertices:
-            return False
-        
-        visited = set()
-        fila = Lista()
-        caminho = Lista()
-        caminho.ins(vOrig)
+    def BFSadapted(self, inicio):
+        queue = Lista()
+        inicio.distance = 0
+        queue.ins(inicio)
+        visitados = Lista()
 
-        fila.ins([vOrig, caminho])
-        
-        while not fila.is_empty():
-            cur, path = fila.pop()
+        while queue:
+            s = queue.pop() #inicio
+            if not s:
+                break
 
-            if cur == vDest:
-                return path.len-1
-            
-            if cur not in visited:
-                visited.add(cur)
+            visitados.ins(s)
 
-                for vizinho in cur.Vizinhos:
-                    path.ins(vizinho)
-                    fila.ins([vizinho, path])
-        
-        return False
-
-grafo = Grafo()
-
-v1 = Vertice('REC')
-v2 = Vertice('BSB')
-
-grafo.new_vertice(v1)
-grafo.new_vertice(v2)
-grafo.new_aresta(v1,v2)
-
-print(grafo.Arestas)
-print(grafo.Vertices)
-
-
-
-
-
-
+            for v in s.Vizinhos:
+                if v.flag == False:
+                    v.flag = True
+                    v.distance = s.distance+1
+                    queue.ins(v)        
+        return visitados
 
 #Driver
-
-
 # Cada celula da matriz = Vertice()
 # id = valor
-# if i > 0, adiciona i-1 a Vertice.Adjacentes #não-direcionado
-# if j > 0, adiciona j-1 a Vertice.Adjacentes #não direcionado
+# if i > 0, adiciona i-1 a Vertice.Adjacentes #nao-direcionado
+# if j > 0, adiciona j-1 a Vertice.Adjacentes #nao direcionado
 
-di, dj = input().split()
-di, dj = int(di), int(dj) 
-matriz = [-1]*di
-grafo = Grafo()
+def main():
+    di, dj = input().split()
+    di, dj = int(di), int(dj) 
+    matriz = [-1]*di
+    grafo = Grafo()
 
-for i in range(di):
-    entry_linha = input().split()
-    matriz[i] = [-1]*dj
-    for j in range(len(entry_linha)):
-        matriz[i][j] = int(entry_linha[j])
-        
-
-        if matriz[i][j] != 1:
-            if matriz[i][j] == 2:
-                origin = (i,j)
-            elif matriz[i][j] == 3:
-                destin = (i,j)
-            matriz[i][j] = grafo.new_vertice((i, j))
-
-            if i>0:
-                if matriz[i-1][j] != 1:
-                    print(matriz[i-1][j])
-
-                    matriz[i][j].Vizinhos.add(matriz[i-1][j])
-                    matriz[i-1][j].Vizinhos.add(matriz[i][j])
-                    grafo.new_aresta(matriz[i][j], matriz[i-1][j])
-                    pass
-            if j>0:
-                if matriz[i][j-1] != 1:
-                    print(matriz[i][j-1])
-
-                    matriz[i][j].Vizinhos.add(matriz[i][j-1])
-                    matriz[i][j-1].Vizinhos.add(matriz[i][j])
-                    grafo.new_aresta(matriz[i][j], matriz[i][j-1])
-                    pass
-
-
-
-
+    for i in range(di):
+        entry_linha = input().split()
+        matriz[i] = [-1]*dj
+        for j in range(len(entry_linha)):
+            matriz[i][j] = int(entry_linha[j])
             
+            if matriz[i][j] != 1:
+                if matriz[i][j] == 2:
+                    origin = (i,j)
+                elif matriz[i][j] == 3:
+                    destin = (i,j)
+                matriz[i][j] = grafo.new_vertice((i, j))
 
+                if i>0:
+                    if matriz[i-1][j] != 1:
+                        #print(matriz[i-1][j])
 
+                        matriz[i][j].Vizinhos.add(matriz[i-1][j])
+                        matriz[i-1][j].Vizinhos.add(matriz[i][j])
+                        grafo.new_aresta(matriz[i][j], matriz[i-1][j])
+                        pass
+                if j>0:
+                    if matriz[i][j-1] != 1:
+                        #print(matriz[i][j-1])
 
-print(matriz)
-print(grafo.Vertices)
-print(grafo.Arestas)
-print(origin, destin)
-oi, oj = origin
-fi, fj = destin
+                        matriz[i][j].Vizinhos.add(matriz[i][j-1])
+                        matriz[i][j-1].Vizinhos.add(matriz[i][j])
+                        grafo.new_aresta(matriz[i][j], matriz[i][j-1])
+                        pass
+    oi, oj = origin
+    fi, fj = destin
+    grafo.BFSadapted(matriz[oi][oj])
 
-print(grafo.bfs(matriz[oi][oj],matriz[fi][fj]))
+    if matriz[fi][fj].distance == float('inf'):
+        print("Labirinto Impossivel")
+    else:
+        print(matriz[fi][fj].distance)
 
-
-
-
-
-
-
-
-
-
-
-
-# linha, coluna = input().split()
-# linha, coluna = int(linha), int(coluna)
-
-# matriz = [None]*linha
-
-# for l in range(linha):
-#     matriz[l] = [None]*coluna
-#     entry = input()
-#     matriz[l] = entry.split()
-
-# for i in range(linha):
-#     for j in range(coluna):
-#         #current
-#         cur = matriz[i][j]
-#         if cur != 1:
-#             if cur == 2:
-#                 start = cur
-#             elif cur == 3:
-#                 end = cur
-#             #vizinhos;
-#             if i < linha-1:
-#                 if matriz[i+1][j] == 0:
-#                     matriz[i][j].insereVizinho(matriz[i+1][j])
-#                     matriz[i+1][j].insereVizinho(matriz[i][j])
-#             if j < coluna-1:
-#                 if matriz[i][j+1]== 0:
-#                     matriz[i][j+1].insereVizinho(matriz[i][j])
-#                     matriz[i][j].insereVizinho(matriz[i][j+1])
-
-
+if __name__ == '__main__':
+    main()
