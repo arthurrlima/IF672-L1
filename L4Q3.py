@@ -213,18 +213,20 @@ print(G)
 
 
 def relaxar(u, v, w, antecessor, p):
-    if p[v] > p[u] + w:
-        antecessor[v] = u
-        p[v] = p[u]+w
+    if p[v.id] > p[u.id] + w:
+        antecessor[v.id] = u
+        p[v.id] = p[u.id]+w
 
 def dijkstra(G, s, w):
 
     antecessor = [-1]*len(G.vertices)
     p = [None]*len(G.vertices)
 
-    p[s] = 0
+    p[s.id] = 0
     S = set()
-    pq = minheap(G.vertices)
+    pq = minheap()
+    pq.push(s)
+
 
     while not pq.isEmpty():
         u = pq.pop()
@@ -266,29 +268,6 @@ def dijkstra(G, s, w):
 #         #else:
 #             #consulta
 #             pass
-
-    
-
-
-#     while (True):
-#         entry = input()
-#         v1, v2, flag = entry.split()
-#         v1 = int(v1)
-#         v2 = int(v2)
-#         flag = int(flag)
-
-#         G.newAresta(v1, v2)
-
-#         if flag == 0:
-#             break
-
-#     for v in G.vertices:
-#         if (v.adjacentes.isEmpty()):
-#             print("{0}: Lista Vazia".format(v.id))
-#         else:
-#             print("{0}: {1}".for
-            
-#     print(" ",end="")
 
 # if __name__ == '__main__':
 #     main()
